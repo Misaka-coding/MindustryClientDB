@@ -2,6 +2,8 @@ package uwu.misaka;
 
 
 import arc.util.Log;
+import mindustry.gen.Groups;
+import mindustry.gen.Player;
 import mindustry.net.Administration;
 
 import java.io.*;
@@ -32,10 +34,19 @@ public class Net{
             while (true) {
                 try {
                     str = in.readLine();
-                    PlayerInfo info =PlayerInfo.fromJson(str);
+                    PlayerInfo info = PlayerInfo.fromJson(str);
                     ArrayList<PlayerInfo> l = new ArrayList<>();
                     Ichi.info.forEach(e->{if(e.uuid.equals(info.uuid))l.add(e);});
                     l.forEach(e->Ichi.info.remove(e));
+                    for(Player p: Groups.player){
+                        if(p.uuid().equals(info.uuid)){
+                            String name = Ranker.prefix(info.getLvl());
+                            if(!info.nick.equals("")){
+                                name+=info.nick;
+                            }else{name+=p.name();}
+                            p.name(name);
+                        }
+                    }
                     Ichi.info.add(info);
                     Log.info("Loaded info about "+info.uuid);
                 } catch (Exception ignored) {

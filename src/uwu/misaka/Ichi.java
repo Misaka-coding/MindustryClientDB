@@ -134,6 +134,22 @@ public class Ichi extends Plugin{
             status+=i.toString();
             Call.infoMessage(player.con(),status);
         });
+        handler.<Player>register("changename","<name>","Change your nickname",(args,player)->{
+            for(PlayerInfo p:info){
+                if(p==null){Call.infoMessage(player.con(),"Нет доступа к базе");}
+                if(p.uuid.equals(player.uuid())){
+                    p.nick=args[0];
+                }
+            }
+        });
+        handler.<Player>register("clearname","Reset your nickname",(args,player)->{
+            for(PlayerInfo p:info){
+                if(p==null){Call.infoMessage(player.con(),"Нет доступа к базе");}
+                if(p.uuid.equals(player.uuid())){
+                    p.nick="";
+                }
+            }
+        });
     }
     public void reRunNet(){
         try {

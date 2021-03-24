@@ -56,4 +56,15 @@ public class PlayerInfo {
         rtn+="До следующего уровня осталось: "+(levelCap-xp);
         return rtn;
     }
+    public int getLvl(){
+        int lvl = 1;
+        long xp = totalPlayedTime * 5+blocksPlaced*3+blocksDestroyed+pvpWins*10+hexedWins*20+attackWins*7+totalWaves*2;
+        long levelCap = 1000;
+        while(xp>levelCap){
+            xp-=levelCap;
+            lvl++;
+            levelCap*=2;
+        }
+        return lvl;
+    }
 }
