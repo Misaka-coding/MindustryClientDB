@@ -15,6 +15,7 @@ public class PlayerInfo {
     public int totalWaves=0;
     public long discordId=0;
     public String nick = "";
+    public String loginName = "";
     public ArrayList<String> warnings = new ArrayList<>();
 
     public PlayerInfo(String uuid){
@@ -38,12 +39,12 @@ public class PlayerInfo {
         minutes=tm;
         while (hours>24){hours -= 24;days++;}
         int lvl = 1;
-        long xp = totalPlayedTime * 5+blocksPlaced*3+blocksDestroyed+pvpWins*10+hexedWins*20+attackWins*7+totalWaves*2;
-        long levelCap = 1000;
+        long xp = (totalPlayedTime * 10)+(blocksPlaced*3)-blocksDestroyed+(pvpWins*10)+(hexedWins*20)+(attackWins*7)+(totalWaves*2);
+        long levelCap = 100;
         while(xp>levelCap){
             xp-=levelCap;
             lvl++;
-            levelCap*=2;
+            levelCap*=1.5;
         }
         String time = days+"д. "+hours+"ч. "+minutes+"м.";
         rtn+="ќбщее врем€ игры на сервере: "+time+"\n";
@@ -58,12 +59,12 @@ public class PlayerInfo {
     }
     public int getLvl(){
         int lvl = 1;
-        long xp = totalPlayedTime * 5+blocksPlaced*3+blocksDestroyed+pvpWins*10+hexedWins*20+attackWins*7+totalWaves*2;
-        long levelCap = 1000;
+        long xp = (totalPlayedTime * 10)+(blocksPlaced*3)-blocksDestroyed+(pvpWins*10)+(hexedWins*20)+(attackWins*7)+(totalWaves*2);
+        long levelCap = 100;
         while(xp>levelCap){
             xp-=levelCap;
             lvl++;
-            levelCap*=2;
+            levelCap*=1.5;
         }
         return lvl;
     }

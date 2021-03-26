@@ -121,7 +121,7 @@ public class Ichi extends Plugin{
     @Override
     public void registerClientCommands(CommandHandler handler){
         handler.<Player>register("status","Player info",(args,player)->{
-            String status="Статус игрока "+player.name()+"\n";
+            String status="Статус игрока "+player.name()+"[][][][][][]\n";
             PlayerInfo i = null;
             for(PlayerInfo p:info){
                 if(p==null){Call.infoMessage(player.con(),"Нет доступа к базе");}
@@ -136,11 +136,17 @@ public class Ichi extends Plugin{
         });
         handler.<Player>register("changename","<name>","Change your nickname",(args,player)->{
             for(PlayerInfo p:info){
+                if(p.getLvl()<10){Call.infoMessage(player.con(),"Требуется 10 уровень и выше");}
                 if(p==null){Call.infoMessage(player.con(),"Нет доступа к базе");}
                 if(p.uuid.equals(player.uuid())){
                     p.nick=args[0];
                 }
             }
+        });
+        handler.<Player>register("rating","Change your nickname",(args,player)->{
+            if(net==null){reRunNet();}
+            if(net==null){return;}
+            net.rating(player.uuid());
         });
         handler.<Player>register("clearname","Reset your nickname",(args,player)->{
             for(PlayerInfo p:info){

@@ -2,6 +2,7 @@ package uwu.misaka;
 
 
 import arc.util.Log;
+import mindustry.gen.Call;
 import mindustry.gen.Groups;
 import mindustry.gen.Player;
 import mindustry.net.Administration;
@@ -34,21 +35,7 @@ public class Net{
             while (true) {
                 try {
                     str = in.readLine();
-                    PlayerInfo info = PlayerInfo.fromJson(str);
-                    ArrayList<PlayerInfo> l = new ArrayList<>();
-                    Ichi.info.forEach(e->{if(e.uuid.equals(info.uuid))l.add(e);});
-                    l.forEach(e->Ichi.info.remove(e));
-                    for(Player p: Groups.player){
-                        if(p.uuid().equals(info.uuid)){
-                            String name = Ranker.prefix(info.getLvl());
-                            if(!info.nick.equals("")){
-                                name+=info.nick;
-                            }else{name+=p.name();}
-                            p.name(name);
-                        }
-                    }
-                    Ichi.info.add(info);
-                    Log.info("Loaded info about "+info.uuid);
+                    handle(str);
                 } catch (Exception ignored) {
                     Log.err("Connection lost");
                     Ichi.net=null;
@@ -78,6 +65,16 @@ public class Net{
             return;
         }
     }
+    public void rating(String i){
+        try {
+            out.write("s "+i+"\n");
+            out.flush();
+        } catch (IOException e) {
+            Log.err("Connection lost");
+            Ichi.net=null;
+            return;
+        }
+    }
     public void exit(){
         try {
             in.close();
@@ -85,8 +82,40 @@ public class Net{
         } catch (IOException e) {
             e.printStackTrace();
         }
-        readMsg.interrupt();
         System.exit(0);
     }
-
+    public void handle(String str){
+        if(str.startsWith("w ")){
+            str=str.substring(2);
+            PlayerInfo info = PlayerInfo.fromJson(str);
+            ArrayList<PlayerInfo> l = new ArrayList<>();
+            Ichi.info.forEach(e->{if(e.uuid.equals(info.uuid))l.add(e);});
+            l.forEach(e->Ichi.info.remove(e));
+            for(Player p: Groups.player){
+                if(p.uuid().equals(info.uuid)){
+                    info.loginName=p.name();
+                    String name = Ranker.prefix(info.getLvl());
+                    if(!info.nick.equals("")){
+                        name+=info.nick;
+                    }else{name+=p.name();}
+                    p.name(name);
+                }
+            }
+            Ichi.info.add(info);
+            Log.info("Loaded info about "+info.uuid);
+            return;
+        }
+        if(str.equals("ar")){
+            Ichi.info.forEach(i->write(i));
+            return;
+        }
+        if(str.startsWith("s ")){
+            str=str.substring(2);
+            RatingInfo info = RatingInfo.fromJson(str);
+            Groups.player.forEach(a->{if(a.uuid().equals(info.rId)){
+                Call.infoMessage(a.con(),info.toString());
+            }});
+            return;
+        }
+    }
 }
